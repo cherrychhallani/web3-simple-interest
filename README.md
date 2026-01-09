@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 Web3 Simple Interest Calculator
 
-## Getting Started
+This project is a simple **Web3 decentralized application (DApp)** to calculate **Simple Interest** using a **Solidity smart contract** and a **NextJS frontend**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📐 Simple Interest Formula
+
+SI = (P × R × T) / 100
+
+Where:
+- **P** = Principal amount  
+- **R** = Rate of interest (stored on blockchain)  
+- **T** = Time period (in years)
+
+---
+
+## 🛠 Tech Stack Used
+
+- **Frontend:** NextJS (React, App Router)
+- **Smart Contract:** Solidity
+- **IDE:** Remix IDE
+- **Blockchain Simulator:** Ganache
+- **Wallet:** MetaMask
+- **Web3 Library:** web3.js
+- **Platform:** Unix (Ubuntu)
+
+---
+
+## 📁 Project Structure
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+web3-simple-interest/
+├── app/                    # NextJS frontend pages
+├── contracts/
+│   └── interestCal.sol     # Solidity smart contract
+├── package.json
+├── README.md
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+````
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔐 Smart Contract Features
 
-To learn more about Next.js, take a look at the following resources:
+- Stores interest rate (`R`) on the blockchain
+- Allows updating interest rate using MetaMask
+- Calculates simple interest using the stored rate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ▶️ How to Run the Project
 
-## Deploy on Vercel
+1. Install dependencies:
+   ```bash
+   npm install
+   ````
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Start the development server:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm run dev
+   ```
+
+3. Open browser:
+
+   ```
+   http://localhost:3000
+   ```
+
+---
+
+## ⛓ Blockchain Setup
+
+* Ganache is used as a local Ethereum blockchain
+* MetaMask is connected to the Ganache network
+* Smart contract is compiled and deployed using Remix IDE
+* Contract address and ABI are used in the frontend to interact with the blockchain
+
+---
+
+## 📝 Notes
+
+* Setting the interest rate requires a blockchain transaction and MetaMask confirmation
+* Calculating interest is a read-only operation and does not require gas
+
+---
+
+## 👤 Author
+
+**Cherry Chhallani**
