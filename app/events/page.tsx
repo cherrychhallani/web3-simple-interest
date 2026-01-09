@@ -1,7 +1,7 @@
 "use client";
 
 import Web3 from "web3";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ABI = [
   {
@@ -82,62 +82,91 @@ const ABI = [
 
 const CONTRACT_ADDRESS = "0x80d1c9ee8934EEb73645aE7a182Ee4d460Cd6105";
 
-export default function Calculate() {
-  const [P, setP] = useState("");
-  const [T, setT] = useState("");
-  const [result, setResult] = useState("");
-  const [account, setAccount] = useState("");
+function stringifyBigInt(obj: any) {
+  return JSON.stringify(
+    obj,
+    (_, value) => (typeof value === "bigint" ? value.toString() : value),
+    2
+  );
+}
 
-  async function connect() {
+export default function EventsPage() {
+  const [events, setEvents] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  async function loadEvents() {
     if (typeof window === "undefined") return;
 
     const ethereum = (window as any).ethereum;
-
     if (!ethereum) {
       alert("MetaMask not detected");
       return;
     }
 
-    const accounts = await ethereum.request({
-      method: "eth_requestAccounts",
-    });
-
-    setAccount(accounts[0]);
-  }
-
-  async function calculate() {
-    const web3 = new Web3(window.ethereum);
+    const web3 = new Web3(ethereum);
     const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 
-    const tx = await contract.methods
-      .calculateInterest(P, T)
-      .send({ from: account });
+    const managerChanged = await contract.getPastEvents("ManagerChanged", {
+      fromBlock: 0,
+      toBlock: "latest",
+    });
 
-    setResult(tx.events.InterestCalculated.returnValues.interest);
+    const rateUpdated = await contract.getPastEvents("RateUpdated", {
+      fromBlock: 0,
+      toBlock: "latest",
+    });
+
+    const interestCalculated = await contract.getPastEvents(
+      "InterestCalculated",
+      {
+        fromBlock: 0,
+        toBlock: "latest",
+      }
+    );
+
+    const allEvents = [
+      ...managerChanged.map((e) => ({
+        type: "ManagerChanged",
+        data: e.returnValues,
+      })),
+      ...rateUpdated.map((e) => ({
+        type: "RateUpdated",
+        data: e.returnValues,
+      })),
+      ...interestCalculated.map((e) => ({
+        type: "InterestCalculated",
+        data: e.returnValues,
+      })),
+    ];
+
+    console.log("Blockchain Events:", allEvents);
+    setEvents(allEvents);
   }
 
   return (
-    <div className="page">
-      <div className="card">
-        <h2>User Dashboard</h2>
+  <div className="page">
+    <div
+      className="card"
+      style={{
+        width: "85%",
+        maxWidth: "1100px"
+      }}
+    >
+      <h2>Blockchain Event Logs</h2>
 
-        <button onClick={connect}>Connect Wallet</button>
-        <p style={{ wordBreak: "break-all" }}>Connected: {account}</p>
+      {events.length === 0 && <p>No events found</p>}
 
-        <input
-          placeholder="Principal Amount"
-          onChange={(e) => setP(e.target.value)}
-        />
-
-        <input
-          placeholder="Time (years)"
-          onChange={(e) => setT(e.target.value)}
-        />
-
-        <button onClick={calculate}>Calculate Interest</button>
-
-        <h3>Interest: {result}</h3>
-      </div>
+      {events.map((e, i) => (
+        <div key={i} style={{ marginBottom: 30 }}>
+          <strong>{e.type}</strong>
+          <pre>{stringifyBigInt(e.data)}</pre>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 }
